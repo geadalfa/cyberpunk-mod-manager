@@ -1,0 +1,6 @@
+# Cyberpunk 2077 Mod Manager
+# Zero third-party dependencies required at runtime (pure standard library).
+
+# Optional build & packaging dependencies:
+pyinstaller>=6.0.0
+pillow>=9.0.0

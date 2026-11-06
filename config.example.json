@@ -1,0 +1,8 @@
+{
+  "nexus_api_key": "YOUR_NEXUS_PERSONAL_API_KEY_HERE",
+  "nexusmods_session": "YOUR_NEXUSMODS_SESSION_COOKIE_VALUE",
+  "nexusmods_session_refresh": "YOUR_NEXUSMODS_SESSION_REFRESH_COOKIE_VALUE",
+  "game_path": "F:\\SteamLibrary\\steamapps\\common\\Cyberpunk 2077",
+  "watch_dir": "D:\\Game Mentah",
+  "keep_archives": false
+}

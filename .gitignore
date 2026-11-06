@@ -1,0 +1,31 @@
+# Credentials & Secrets (CRITICAL: NEVER COMMIT PERSONAL KEYS OR COOKIES)
+config.json
+*.key
+*.token
+*.cookie
+
+# Python & Build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Modding staging and test artifacts
+.gemi_mods/
+staging/
+test_staging/
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+
+# IDE and OS
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store

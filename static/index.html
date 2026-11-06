@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyberpunk 2077 Mod Manager & Installer</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20100%22%20100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body class="bg-zinc-950 text-zinc-100 font-sans antialiased">
+  <div class="app-container">
+    
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-badge">⚡ CP77</div>
+        <div>
+          <h1 class="header-title">Cyberpunk 2077 Mod Manager</h1>
+          <p class="header-subtitle">Direct Nexus Mods Downloader & Transactional Safety Installer</p>
+        </div>
+      </div>
+      <div class="header-status">
+        <div id="badge-api" class="status-pill status-pill-muted">
+          <span class="status-dot"></span> <span id="text-api-status">API: Checking...</span>
+        </div>
+        <div id="badge-cookie" class="status-pill status-pill-muted">
+          <span class="status-dot"></span> <span id="text-cookie-status">Cookie: Checking...</span>
+        </div>
+        <div id="badge-game" class="status-pill status-pill-muted">
+          <span class="status-dot"></span> <span id="text-game-status">Game: CP2077</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Nav Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="tab-install">⚡ Download & Install</button>
+      <button class="nav-tab" data-tab="tab-installed">📦 Installed Mods (<span id="installed-count">0</span>)</button>
+      <button class="nav-tab" data-tab="tab-config">⚙️ Credentials & Settings</button>
+    </nav>
+
+    <!-- TAB 1: DOWNLOAD & INSTALL -->
+    <main id="tab-install" class="tab-content active">
+      
+      <!-- URL Input Card -->
+      <section class="card mb-4">
+        <div class="card-header">
+          <h2 class="section-title">Nexus Mods URL / ID</h2>
+          <span class="badge-hint">Supports Nexus web links, nxm:// links, or Mod IDs</span>
+        </div>
+        <div class="input-group">
+          <input type="text" id="input-mod-url" class="text-input" 
+                 placeholder="Paste mod URL here (e.g. https://www.nexusmods.com/cyberpunk2077/mods/16565)..." 
+                 value="https://www.nexusmods.com/cyberpunk2077/mods/16565">
+          <button id="btn-inspect-url" class="btn btn-secondary">🔍 Inspect Mod</button>
+          <button id="btn-paste-url" class="btn btn-muted">📋 Paste</button>
+        </div>
+      </section>
+
+      <!-- Mod Inspection Card (Revealed upon inspection) -->
+      <section id="mod-preview-card" class="card mb-4 hidden">
+        <div class="mod-preview-grid">
+          <div class="mod-thumbnail-col">
+            <img id="mod-thumb" src="" alt="Mod Preview" class="mod-image">
+          </div>
+          <div class="mod-details-col">
+            <div class="mod-title-row">
+              <h3 id="mod-name" class="mod-title">Mod Title</h3>
+              <span id="mod-version-badge" class="badge-pill">v1.0.0</span>
+            </div>
+            <p id="mod-author" class="mod-meta">By Author</p>
+            <p id="mod-summary" class="mod-summary-text"></p>
+            
+            <!-- File Selector Dropdown -->
+            <div class="file-select-row">
+              <label for="select-mod-file" class="field-label">Download Target File:</label>
+              <select id="select-mod-file" class="select-input"></select>
+            </div>
+
+            <!-- Install Button & Trigger -->
+            <div class="action-row">
+              <button id="btn-download-install" class="btn btn-primary btn-lg">
+                ⬇️ Download & Install Mod Directly
+              </button>
+              <span id="install-subtext" class="hint-text">Bypasses 5-second countdown timer via session cookie</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Live Execution Log -->
+      <section class="card">
+        <div class="card-header">
+          <h3 class="section-title">Execution Console & Safety Journal</h3>
+          <button id="btn-clear-log" class="btn-link">Clear Log</button>
+        </div>
+        <div id="console-log" class="console-box">
+          <div class="log-entry log-info">[System] Ready. Paste a Nexus Mods link above to inspect and install.</div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- TAB 2: INSTALLED MODS -->
+    <main id="tab-installed" class="tab-content">
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="section-title">Deployed Cyberpunk 2077 Mods</h2>
+            <p class="hint-text">Managed with SHA-256 transactional manifests in <code>.gemi_mods/</code></p>
+          </div>
+          <div class="header-actions">
+            <button id="btn-check-updates" class="btn btn-secondary">🔄 Check All Updates</button>
+            <button id="btn-refresh-installed" class="btn btn-muted">Refresh</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mod Name</th>
+                <th>Mod ID</th>
+                <th>Installed Version</th>
+                <th>Latest Version</th>
+                <th>Status</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="installed-mods-tbody">
+              <tr>
+                <td colspan="6" class="text-center py-4 text-zinc-500">Loading installed mods...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- TAB 3: CONFIGURATION & CREDENTIALS -->
+    <main id="tab-config" class="tab-content">
+      <div class="config-grid">
+        
+        <!-- Left Column: Forms -->
+        <section class="card">
+          <div class="card-header">
+            <h2 class="section-title">Nexus Mods Credentials</h2>
+            <span class="badge-hint">Stored securely in local config</span>
+          </div>
+
+          <!-- Form 1: API Key -->
+          <div class="form-group mb-4">
+            <label class="field-label" for="cfg-api-key">Form 1: Personal API Key</label>
+            <div class="input-with-action">
+              <input type="password" id="cfg-api-key" class="text-input" placeholder="Enter Nexus Personal API Key...">
+              <button id="btn-toggle-key" class="btn btn-muted btn-sm">👁️</button>
+              <button id="btn-validate-key" class="btn btn-secondary btn-sm">Validate</button>
+            </div>
+            <p class="field-help">Obtained from Nexus Mods -> User Settings -> API Keys (at the bottom).</p>
+          </div>
+
+          <!-- Form 3: Session Cookie -->
+          <div class="form-group mb-4">
+            <label class="field-label" for="cfg-cookie-session">Form 3: Session Cookie (<code>nexusmods_session</code>)</label>
+            <input type="text" id="cfg-cookie-session" class="text-input" placeholder="e.g. a19e907855eb6dbce257e5beac0d7b8b">
+            <p class="field-help">Required to bypass Cloudflare Turnstile and 5-sec countdown on Free accounts.</p>
+          </div>
+
+          <!-- Form 4: Refresh Token -->
+          <div class="form-group mb-4">
+            <label class="field-label" for="cfg-cookie-refresh">Form 4: Session Refresh (<code>nexusmods_session_refresh</code>)</label>
+            <input type="text" id="cfg-cookie-refresh" class="text-input" placeholder="e.g. 1793943186">
+          </div>
+
+          <!-- Form 5: Paths -->
+          <div class="form-group mb-4">
+            <label class="field-label" for="cfg-game-path">Cyberpunk 2077 Game Directory</label>
+            <input type="text" id="cfg-game-path" class="text-input" placeholder="F:\SteamLibrary\steamapps\common\Cyberpunk 2077">
+          </div>
+
+          <div class="form-group mb-4">
+            <label class="field-label" for="cfg-watch-dir">Download Watch Directory</label>
+            <input type="text" id="cfg-watch-dir" class="text-input" placeholder="D:\Game Mentah">
+          </div>
+
+          <div class="form-checkbox mb-4">
+            <label class="checkbox-label">
+              <input type="checkbox" id="cfg-keep-archives">
+              <span>Keep downloaded archives in watch directory (Unchecked = Auto-delete per Invariant 6)</span>
+            </label>
+          </div>
+
+          <button id="btn-save-config" class="btn btn-primary">💾 Save Configuration</button>
+        </section>
+
+        <!-- Right Column: System & Frameworks Inspector -->
+        <section class="card">
+          <div class="card-header">
+            <h2 class="section-title">Environment & Frameworks</h2>
+            <span class="badge-pill badge-success">Cyberpunk 2077</span>
+          </div>
+
+          <div class="frameworks-list" id="frameworks-container">
+            <p class="text-zinc-500">Scanning installed frameworks...</p>
+          </div>
+
+          <div class="safety-box mt-4">
+            <h4 class="safety-title">🛡️ 6 Active Safety Invariants:</h4>
+            <ul class="safety-list">
+              <li><strong>1. No Silent Clobber:</strong> Never overwrites vanilla binaries (.exe/.pak).</li>
+              <li><strong>2. Binary Version Gate:</strong> Matches hook DLLs with game build.</li>
+              <li><strong>3. Staging Isolation:</strong> Unpacks in ~/.gemini/staging first.</li>
+              <li><strong>4. Transactional Manifest:</strong> Records SHA-256 ledger for rollback.</li>
+              <li><strong>5. Reversible Undeploy:</strong> Preserves user customized settings.</li>
+              <li><strong>6. Auto Sanitation:</strong> Automatically deletes raw downloaded archives.</li>
+            </ul>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
